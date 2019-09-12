@@ -15,6 +15,11 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
         self.ApplyB.clicked.connect(self.setVelocity)
         self.HomeB.clicked.connect(self.Home)
 
+        self.PositionSlide.sliderMoved.connect(self.Movestage)
+
+    def Movestage(self):
+        self.Motor.move_to(self.PositionSlide.value())
+
     def showself(self):
         self.show()
 
