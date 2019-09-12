@@ -188,6 +188,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         self.setupUi(self)
     def inittimebase(self, deltaT):
         self.deltaT = deltaT
+
     def MakeAvg(self, printer):
 
         file_path = filedialog.askopenfilenames()

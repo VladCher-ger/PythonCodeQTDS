@@ -5,7 +5,8 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
     def __init__(self, Mototr, parent=None):
         super(MotorCntrl, self).__init__()
         self.Motor = Mototr
-        self.MotorThread = MotorCntrlThread(Motor=Mototr)
+        self.Positions = [float(self.StartPos.text()), float(self.StartMeasPos.text()), float(self.StopMeasPos.text()), float(self.EndPos.text())]
+        self.MotorThread = MotorCntrlThread(Motor=Mototr, Positions=self.Positions)
         self.setupUi(self)
         self.setVelocity()
         self.Motor.move_home(False)
@@ -38,19 +39,19 @@ class MotorCntrlThread(QtCore.QThread):
 
     StartAcquisition = QtCore.pyqtSignal()
     StopAcquisition = QtCore.pyqtSignal()
-    def __init__(self, Motor, parent = None):
+    def __init__(self, Motor,Positions , parent = None):
         super(MotorCntrlThread,self).__init__()
         self.Motor = Motor
-
+        self.Positions = Positions
     def run(self):
-        self.Motor.move_to(1,True)
-        self.Motor.move_to(98, False)
+        self.Motor.move_to(self.Positions(0),True)
+        self.Motor.move_to(self.Positions(3), False)
 
-        while self.Motor.position <20 :
+        while self.Motor.position <self.Positions(1) :
             None
         self.StartAcquisition.emit()
-        while self.Motor.position <80:
+        while self.Motor.position <self.Positions(2):
             None
         self.StopAcquisition.emit()
-        self.msleep(20)
+        self.msleep(5)
         return
