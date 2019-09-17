@@ -100,6 +100,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.actionThorlabs.triggered.connect(self.MotorCntrl.showself)
         self.actionThorlabs.setShortcut("Ctrl+M")
 
+
     #Stellt ein Eth verbindung mit dem Board her. Übergibt Dabei Portnummer und MAC-Addresse aus GUI
     def ConnectToCora(self):
         # Erstellen der Ethernetcomm Klasse zur Kommunikation mit dem Armprozessor
@@ -120,7 +121,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             #Erzeugung eines Threads zum zeitlichen Buffern zwischen Messungen
             self.TimerThread = TimerThread()
             #Automatisches Startet einer neuen Messung, wenn die ANzahl an gewünschten Messungen noch nicht Erfolgt ist
-            self.TimerThread.Emit.connect(self.EthDevice.StartAcquisition)
+            self.TimerThread.Emit.connect(self.MotorCntrl.StartRun)
 
         connect = self.EthDevice.Connect(self.IPT.text(), int(self.PORTT.text()))
         self.LogBox.setPlainText(connect)
@@ -157,7 +158,10 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             #Dabei wird ein Thread erstellt, der alle n ms die Daten abfragt.
             #Ist die Messung Worbei wird ein 'Done' in den Daten mitgeschickt.
             #Der Thread beendet die Übertragung und gibt die gespeicherten Daten zur weiterverarbeitung an UpdateGraph weiter
-            self.EthDevice.StartAcquisition()
+            if self.DelayLine == None:
+                self.EthDevice.StartAcquisition()
+            else:
+                self.MotorCntrl.StartRun()
         except:
             None
 
@@ -169,7 +173,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.EthDevice.EthThread.KillSelf()
 
     def UpdateGraph(self, RawData):
-        #Wählt nach den Einstellungen aus, ob life FFt oder nicht
+
         self.lifeGraph.clear()
         try:
             if self.lifefft == False and self.StoreMeas.isChecked():
@@ -183,8 +187,9 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.curve = self.lifeGraph.getPlotItem().plot()
 
         #Sortiert die Rohdaten nach nach Order und Wandelt aus dem macht aus dem 12 bit zweierkomplement ein 16 Bit zweierkomplement
-        if len(RawData) > 4000:
-        
+        if len(RawData) > 100:
+            # Wählt nach den Einstellungen aus, ob life FFt oder nicht
+
             for i in range(0, len(RawData)-1,2):
                 self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
 
@@ -214,10 +219,10 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
                 dataitem = self.storeGraph.getPlotItem().plot()
 
-                dataitem.setData(freq[freqmask] ,my_fft[freqmask]-noicemean)
+                dataitem.setData(freq[freqmask] ,my_fft[freqmask])
         else:
             self.NumberOfRuns = self.NumberOfRuns + 1
-
+        print('Updategraph')
         #Wiederhohlen der Messung und Updaten des Messfortschrittbalkens
         if(self.NumberOfRuns>1):
 
@@ -270,7 +275,7 @@ class TimerThread(QtCore.QThread):
         super(TimerThread, self).__init__()
 
     def run(self):
-        sleeptime.sleep(0.3)
+        sleeptime.sleep(0.2)
         self.Emit.emit()
 
 

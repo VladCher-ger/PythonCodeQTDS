@@ -211,6 +211,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                        else:
                            val.append(float(row[1]))
             except:
+                print('Nope')
                 break
                 self.close()
                 return
@@ -219,10 +220,10 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.8, maxval), distance=200)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=20/self.deltaT)
 
             distance = peaks[1:-1]-peaks[0:-1-1]
-            #print(distance)
+
             try:
                 if np.min(distance)*self.deltaT< 18 or np.max(distance)*self.deltaT >28:
 
@@ -230,11 +231,11 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             except:
                 continue
 
-            if(min(peaks)<300):
+            if(min(peaks)<20):
 
                 continue
 
-            valarray = valarray[peaks[0]-300:-1]
+            valarray = valarray[peaks[0]-20:-1]
             print(i +" is Valid")
             cutval.append(valarray)
         #############################################

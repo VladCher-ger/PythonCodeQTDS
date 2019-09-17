@@ -102,7 +102,7 @@ class EthThread(QtCore.QThread):
             self.usleep(2000)
             Cora.sendall(b'Sag')
             print(len(self.rec))
-            if len(self.rec)<10000:
+            if len(self.rec)<100:
                 self.Error.emit("Error")
                 print("end")
                 self.DataReady.emit(bytearray())

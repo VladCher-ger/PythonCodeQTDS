@@ -36,8 +36,9 @@ class DelayLineInit():
         return None
 
     def SearchForThorLabs(self, SN):
+
         import thorlabs_apt as apt
-        #print(SN)
+
         try:
             self.ThorLabs = apt.Motor(SN)
 

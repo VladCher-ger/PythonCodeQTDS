@@ -5,11 +5,13 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
     def __init__(self, Mototr, parent=None):
         super(MotorCntrl, self).__init__()
         self.Motor = Mototr
-        self.Positions = [self.StartPos, self.StartMeasPos, self.StopMeasPos, self.EndPos]
-        self.MotorThread = MotorCntrlThread(Motor=Mototr, Positions=self.Positions)
+
         self.setupUi(self)
         self.setVelocity()
         self.Motor.move_home(False)
+
+        self.Positions = [self.StartPos, self.StartMeasPos, self.StopMeasPos, self.EndPos]
+        self.MotorThread = MotorCntrlThread(Motor=Mototr, Positions=self.Positions)
         self.show()
 
         self.ApplyB.clicked.connect(self.setVelocity)
@@ -49,13 +51,13 @@ class MotorCntrlThread(QtCore.QThread):
         self.Motor = Motor
         self.Positions = Positions
     def run(self):
-        self.Motor.move_to(self.Positions(float(self.Positions(0).text())),True)
-        self.Motor.move_to(float(self.Positions(3).text()), False)
+        self.Motor.move_to(40,True)
+        self.Motor.move_to(75, False)
 
-        while self.Motor.position <float(self.Positions(1).text()):
+        while self.Motor.position <50:
             None
         self.StartAcquisition.emit()
-        while self.Motor.position <float(self.Positions(2).text()):
+        while self.Motor.position <55:
             None
         self.StopAcquisition.emit()
         self.msleep(5)
