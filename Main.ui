@@ -303,6 +303,7 @@
      <string>Menu</string>
     </property>
     <addaction name="actionExit"/>
+    <addaction name="actionConfiguration"/>
    </widget>
    <widget class="QMenu" name="menuMotorCntrl">
     <property name="title">
@@ -425,6 +426,11 @@
   <action name="actionCalc_Absorbtion">
    <property name="text">
     <string>Calc Absorbtion</string>
+   </property>
+  </action>
+  <action name="actionConfiguration">
+   <property name="text">
+    <string>Configuration</string>
    </property>
   </action>
  </widget>

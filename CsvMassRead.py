@@ -10,6 +10,8 @@ from PyQt5 import  QtGui, Qt, QtCore, QtWidgets
 import time as sleeptime
 import gc
 
+import FileHandle
+
 
 import ProBar, Dialog
 
@@ -24,6 +26,8 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
     def LoadFiles(self,Refrect = True):
 
         self.Refrect = Refrect
+
+        self.deltaT = FileHandle.getResolution()
 
         file1 = filedialog.askopenfilename()
         file2 = filedialog.askopenfilename()
@@ -64,7 +68,7 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
     def ClacAbsorbtion(self):
 
         file_path = filedialog.askopenfilename()
-
+        self.deltaT = FileHandle.getResolution()
 
         f = []
         val = []
@@ -186,10 +190,12 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         self.root = tk.Tk()
         self.root.withdraw()
         self.setupUi(self)
-    def inittimebase(self, deltaT):
-        self.deltaT = deltaT
+
+        self.deltaT = FileHandle.getResolution()
 
     def MakeAvg(self, printer):
+
+        self.deltaT = FileHandle.getResolution()
 
         file_path = filedialog.askopenfilenames()
 
@@ -282,6 +288,8 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
     def ZeroFit(self, small = False):
 
+        self.deltaT = FileHandle.getResolution()
+
         avg = []
 
         file_path = filedialog.askopenfilename()
@@ -323,8 +331,9 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.show()
 
     def MakeFFT(self, window = None):
-        avg = []
 
+        avg = []
+        self.deltaT = FileHandle.getResolution()
         file_path = filedialog.askopenfilename()
         try:
             with open(file_path) as csv_file:
@@ -380,6 +389,8 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.show()
 
     def findPeakPos(self):
+
+        self.deltaT = FileHandle.getResolution()
 
         file_path = filedialog.askopenfilenames()
 
@@ -441,6 +452,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
     def LoadPLot(self):
 
+        self.deltaT = FileHandle.getResolution()
 
         file_path = filedialog.askopenfilenames()
 

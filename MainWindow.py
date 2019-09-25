@@ -19,35 +19,43 @@ import CoraEth_Thorlabs
 import ThorLabsCntrl
 import OzODL
 import CsvMassRead
+import FileHandle
+
+from shutil import copyfile
 
 import gc
 
 
 class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
-    #const = 16/961540
-    const =0.00325*8
+
+
     def __init__(self, parent=None):
         super(MainApplication, self).__init__(parent)
-        # Verbindet Hauptprogramm mit GUI
+
+        FileHandle.initconfig()
+
+
+
+                                                        # Verbindet Hauptprogramm mit GUI
         self.setupUi(self)
 
-        # Erzeugt das Erste Grahpenelement
+                                                        # Erzeugt das Erste Grahpenelement
         self.lifeGraph = pg.PlotWidget()
         self.GraphHolder.addWidget(self.lifeGraph)
 
-        #Erzeugt das Zweiter Graphenelement
+                                                         #Erzeugt das Zweiter Graphenelement
         self.storeGraph = pg.PlotWidget()
         self.GraphHolder.addWidget(self.storeGraph)
 
-        #Verbindung der Toolbaroptionen mit Actionen und Shortcuts
+                                                         #Verbindung der Toolbaroptionen mit Actionen und Shortcuts
         self.actionExit.setShortcut("Ctrl+E")
-        #Schließen des Programms
+                                                        #Schließen des Programms
         self.actionExit.triggered.connect(self.Close)
 
-        #Bereitstellen der Postcalculationfunktionen
+                                                        #Bereitstellen der Postcalculationfunktionen
         self.PostCalc = CsvMassRead.PostCalculation()
-        self.PostCalc.inittimebase(self.const)
-        #Toolbaractionen mit Funktionsverbindungen
+
+                                                        #Toolbaractionen mit Funktionsverbindungen
         self.actionLoad_Graph.triggered.connect(self.PostCalc.LoadPLot)
         self.actionMake_AVG.triggered.connect(self.PostCalc.MakeAvg)
 
@@ -76,6 +84,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.SearchDelayB.clicked.connect(self.SearchDelay)
         self.DelayLine = None
         self.ConnectCoraB.clicked.connect(self.ConnectToCora)
+
 
 
 
@@ -154,6 +163,12 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
                 self.folder =self.path + now.strftime("_%b_%d_%Y_%H_%M_%S")
                 os.mkdir(self.folder)
 
+
+                copyfile('.\cnfg.txt', self.folder+'\cnfg.txt')
+                copyfile('.\Resolution.txt', self.folder + '\cesolution.txt')
+
+
+
             #gibt den Befehl an das Board zum Straten einer Messung
             #Dabei wird ein Thread erstellt, der alle n ms die Daten abfragt.
             #Ist die Messung Worbei wird ein 'Done' in den Daten mitgeschickt.
@@ -173,6 +188,8 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.EthDevice.EthThread.KillSelf()
 
     def UpdateGraph(self, RawData):
+
+        self.const = FileHandle.getResolution()
 
         self.lifeGraph.clear()
         try:
@@ -206,7 +223,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
             #Life FFT oder nicht
             if self.lifefft or not self.StoreMeas.isChecked():
-                window = windows.hanning(len(self.Data))
+                window = windows.blackman(len(self.Data))
                 my_fft = fft(self.Data*window)
                 freq = np.linspace(0.0, 1.0/(2.0*self.const*1e-12), len(self.Data)//2)
                 my_fft = np.abs(my_fft/len(self.Data))
