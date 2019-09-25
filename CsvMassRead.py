@@ -27,10 +27,25 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
 
         self.Refrect = Refrect
 
-        self.deltaT = FileHandle.getResolution()
+
 
         file1 = filedialog.askopenfilename()
         file2 = filedialog.askopenfilename()
+
+        folder = file1.split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
 
         times1 = []
         with open(file1) as csv_reader:
@@ -68,7 +83,21 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
     def ClacAbsorbtion(self):
 
         file_path = filedialog.askopenfilename()
-        self.deltaT = FileHandle.getResolution()
+
+        folder = file_path.split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
 
         f = []
         val = []
@@ -191,13 +220,27 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         self.root.withdraw()
         self.setupUi(self)
 
-        self.deltaT = FileHandle.getResolution()
 
     def MakeAvg(self, printer):
 
-        self.deltaT = FileHandle.getResolution()
+
 
         file_path = filedialog.askopenfilenames()
+
+        folder = file_path[0].split('/')
+
+        path = ''
+        for i in range(0,len(folder)-1):
+            path = path + folder[i]+"/"
+        path = path +'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
 
         cutval = []
 
@@ -217,7 +260,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                        else:
                            val.append(float(row[1]))
             except:
-                print('Nope')
+
                 break
                 self.close()
                 return
@@ -242,7 +285,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                 continue
 
             valarray = valarray[peaks[0]-20:-1]
-            print(i +" is Valid")
+
             cutval.append(valarray)
         #############################################
         #self.close()
@@ -288,11 +331,27 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
     def ZeroFit(self, small = False):
 
-        self.deltaT = FileHandle.getResolution()
+
 
         avg = []
 
         file_path = filedialog.askopenfilename()
+
+        folder = file_path[0].split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
+
         try:
             with open(file_path) as csv_file:
                 reader = csv.reader(csv_file, delimiter=';')
@@ -333,8 +392,24 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
     def MakeFFT(self, window = None):
 
         avg = []
-        self.deltaT = FileHandle.getResolution()
+
         file_path = filedialog.askopenfilename()
+
+        folder = file_path.split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
+
         try:
             with open(file_path) as csv_file:
                 reader = csv.reader(csv_file, delimiter=';')
@@ -390,10 +465,24 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
     def findPeakPos(self):
 
-        self.deltaT = FileHandle.getResolution()
+
 
         file_path = filedialog.askopenfilenames()
 
+        folder = file_path[0].split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
 
         self.LoadCsvBar.setMaximum(len(file_path))
         self.show()
@@ -452,9 +541,24 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
     def LoadPLot(self):
 
-        self.deltaT = FileHandle.getResolution()
+
 
         file_path = filedialog.askopenfilenames()
+
+        folder = file_path[0].split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
 
         self.LoadCsvBar.setMaximum(len(file_path))
         self.show()

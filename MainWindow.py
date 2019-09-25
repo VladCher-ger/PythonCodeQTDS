@@ -165,7 +165,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
 
                 copyfile('.\cnfg.txt', self.folder+'\cnfg.txt')
-                copyfile('.\Resolution.txt', self.folder + '\cesolution.txt')
+                copyfile('.\Resolution.txt', self.folder + '\Resolution.txt')
 
 
 
