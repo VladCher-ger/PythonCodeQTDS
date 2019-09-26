@@ -19,7 +19,7 @@ class CoraZ7Eth():
         except:
             IP = '192.168.1.10'
             #return "Search unsuccesful\n"
-
+        print(IP)
         self.Cora = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Cora.settimeout(2)
         try:
@@ -102,7 +102,7 @@ class EthThread(QtCore.QThread):
 
 
             print(len(self.rec))
-            if len(self.rec)<200000:
+            if len(self.rec)<10000:
                 self.Error.emit("Error")
                 print("end")
                 self.DataReady.emit(bytearray())

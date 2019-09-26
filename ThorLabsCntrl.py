@@ -26,8 +26,8 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
 
     def setparam(self):
 
-        for i in self.Positions:
-            self.Positions.pop(0)
+        for i in range(0,len(self.Positions)):
+            self.Positions.pop()
 
 
         self.Positions.append(float(self.StartPos.text()))
@@ -35,8 +35,7 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
         self.Positions.append(float(self.StopMeasPos.text()))
         self.Positions.append(float(self.EndPos.text()))
 
-
-
+        print(self.Positions)
     def Movestage(self):
 
         self.Motor.move_to(self.PositionSlide.value())
@@ -80,15 +79,15 @@ class MotorCntrlThread(QtCore.QThread):
         self.Positions = Positions
 
     def run(self):
+        print(self.Positions[0])
+        self.Motor.move_to(self.Positions[0], True)
+        self.Motor.move_to(self.Positions[3], False)
 
-        self.Motor.move_to(self.Positions(0), True)
-        self.Motor.move_to(self.Positions(3), False)
-
-        while self.Motor.position < self.Positions(1):
+        while self.Motor.position < self.Positions[1]:
             None
         self.StartAcquisition.emit()
-        while self.Motor.position < self.Positions(2):
+        while self.Motor.position < self.Positions[2]:
             None
         self.StopAcquisition.emit()
-        self.msleep(2)
-        self.terminate()
+
+        return

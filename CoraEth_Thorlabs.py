@@ -54,7 +54,7 @@ class EthThread(QtCore.QThread):
         self.rec = bytearray()
         gesval=0
         print("start")
-        self.usleep(1000)
+
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as Cora:
             try:
                 Cora.connect(self.conndata)
@@ -83,6 +83,7 @@ class EthThread(QtCore.QThread):
 
                 except:
                     self.Error.emit("Error")
+                    self.msleep(50)
                     self.DataReady.emit(bytearray())
                     print("end")
                     return

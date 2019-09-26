@@ -269,12 +269,12 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=22/self.deltaT)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=21/self.deltaT)
 
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 22 or np.max(distance)*self.deltaT >24:
+                if np.min(distance)*self.deltaT< 21 or np.max(distance)*self.deltaT >25:
 
                     continue
             except:

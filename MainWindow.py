@@ -190,7 +190,8 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
     def UpdateGraph(self, RawData):
 
         self.const = FileHandle.getResolution()
-
+        #self.const =0.00325*4
+        print(self.const)
         self.lifeGraph.clear()
         try:
             if self.lifefft == False and self.StoreMeas.isChecked():
@@ -204,7 +205,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.curve = self.lifeGraph.getPlotItem().plot()
 
         #Sortiert die Rohdaten nach nach Order und Wandelt aus dem macht aus dem 12 bit zweierkomplement ein 16 Bit zweierkomplement
-        if len(RawData) > 100:
+        if len(RawData) > 50:
             # Wählt nach den Einstellungen aus, ob life FFt oder nicht
 
             for i in range(0, len(RawData)-1,2):
