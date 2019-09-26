@@ -269,22 +269,22 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=20/self.deltaT)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=22/self.deltaT)
 
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 18 or np.max(distance)*self.deltaT >28:
+                if np.min(distance)*self.deltaT< 22 or np.max(distance)*self.deltaT >24:
 
                     continue
             except:
                 continue
 
-            if(min(peaks)<20):
+            if(min(peaks)<50):
 
                 continue
-
-            valarray = valarray[peaks[0]-20:-1]
+            print(i)
+            valarray = valarray[peaks[0]-50:-1]
 
             cutval.append(valarray)
         #############################################
