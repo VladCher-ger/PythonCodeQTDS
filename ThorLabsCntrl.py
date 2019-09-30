@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, Qt
 import ThorLabs
 import FileHandle
+import time
 
 class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
     def __init__(self, Mototr, parent=None):
@@ -8,10 +9,10 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
         self.Motor = Mototr
 
         self.setupUi(self)
+        self.VelT.setText(str(FileHandle.getAttribute('speed')))
         self.setVelocity()
         self.Motor.move_home(False)
 
-        self.VelT.setText(str(FileHandle.getAttribute(speed)))
 
         self.Positions = [float(self.StartPos.text()), float(self.StartMeasPos.text()), float(self.StopMeasPos.text()),
                           float(self.EndPos.text())]
@@ -51,9 +52,6 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
         self.Motor.move_home(False)
 
     def setVelocity(self):
-
-
-
         self.Motor.set_velocity_parameters(1,float(self.AccelT.text()), float(self.VelT.text()))
         self.Motor.set_move_home_parameters(direction=self.Motor.move_home_direction,
                                             lim_switch=self.Motor.move_home_lim_switch,
@@ -68,6 +66,8 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
 
     def StartRun(self):
         self.MotorThread.setTerminationEnabled(True)
+        self.Positions.reverse()
+
         while self.MotorThread.isRunning():
             None
         self.MotorThread.start()
@@ -83,15 +83,31 @@ class MotorCntrlThread(QtCore.QThread):
         self.Positions = Positions
 
     def run(self):
-        print(self.Positions[0])
-        self.Motor.move_to(self.Positions[0], True)
-        self.Motor.move_to(self.Positions[3], False)
+        print(self.Positions)
 
-        while self.Motor.position < self.Positions[1]:
-            None
-        self.StartAcquisition.emit()
-        while self.Motor.position < self.Positions[2]:
-            None
-        self.StopAcquisition.emit()
+        if self.Positions[0]<self.Positions[3]:
 
+            self.Motor.move_to(self.Positions[0], True)
+            self.Motor.move_to(self.Positions[3], False)
+
+            while self.Motor.position < self.Positions[1]:
+                None
+            self.StartAcquisition.emit()
+            while self.Motor.position < self.Positions[2]:
+                None
+            self.StopAcquisition.emit()
+
+
+        else:
+            self.Motor.move_to(self.Positions[0], True)
+            self.Motor.move_to(self.Positions[3], False)
+
+            while self.Motor.position > self.Positions[1]:
+                None
+            self.StartAcquisition.emit()
+            while self.Motor.position > self.Positions[2]:
+                None
+            self.StopAcquisition.emit()
+
+        self.msleep(100)
         return

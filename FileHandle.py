@@ -61,7 +61,7 @@ def initconfig():
             f.write('Number of optical paths; 2\n')
             f.write('Running Avarage; 64\n')
 
-        repRate = 43.24
+        repRate = 43.47
         speed = 120
         number = 2
         avg = 64

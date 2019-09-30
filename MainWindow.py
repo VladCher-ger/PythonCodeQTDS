@@ -100,7 +100,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             self.LogBox.setPlainText("KBD101 found\n"+self.LogBox.toPlainText())
             self.DelayT.setText("KBD101")
             self.SetUpThorlabsSignals()
-            FileHandle.updatecnfg(attribute=Number, value=2)
+            #FileHandle.updatecnfg(attribute='Number', value=2)
 
     #Verbinden der Funktionen und Actionenen mit Thorlabscontrolle
     def SetUpThorlabsSignals(self):
