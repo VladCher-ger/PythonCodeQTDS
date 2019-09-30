@@ -11,6 +11,8 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
         self.setVelocity()
         self.Motor.move_home(False)
 
+        self.VelT.setText(str(FileHandle.getAttribute(speed)))
+
         self.Positions = [float(self.StartPos.text()), float(self.StartMeasPos.text()), float(self.StopMeasPos.text()),
                           float(self.EndPos.text())]
 
@@ -50,7 +52,9 @@ class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
 
     def setVelocity(self):
 
-        self.Motor.set_velocity_parameters(1,float(self.AccelT.text()),float(self.VelT.text()))
+
+
+        self.Motor.set_velocity_parameters(1,float(self.AccelT.text()), float(self.VelT.text()))
         self.Motor.set_move_home_parameters(direction=self.Motor.move_home_direction,
                                             lim_switch=self.Motor.move_home_lim_switch,
                                             velocity=float(self.HVelT.text()),zero_offset=1)

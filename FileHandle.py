@@ -77,3 +77,16 @@ def getResolution():
         for line in f.readlines():
             category, value = line.strip().split(';')
     return float(value)
+
+def getAttribute(attribute=None):
+
+    if os.path.isfile('./cnfg.txt'):
+        with open('cnfg.txt', 'r') as f:
+            for line in f.readlines():
+                category, value = line.strip().split(";")
+
+                if attribute in category:
+                    return float(value)
+    else:
+        return 30
+
