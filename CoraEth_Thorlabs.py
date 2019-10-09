@@ -72,8 +72,14 @@ class EthThread(QtCore.QThread):
                 if(gesval>300000):
                     self.running = False
                     print("Overflow")
+
+                    for i in range(0,20):
+                        self.msleep(1)
+                        if self.running==False:
+                            continue
+
                     self.rec.clear()
-                self.msleep(15)
+
                 Cora.sendall(b'flush')
                 try:
                     buff = Cora.recv(4096)
