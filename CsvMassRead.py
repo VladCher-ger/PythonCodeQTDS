@@ -47,30 +47,61 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         except:
             self.deltaT = FileHandle.getResolution()
 
-        times1 = []
+        val = []
         with open(file1) as csv_reader:
              reader = csv.reader(csv_reader, delimiter=';')
 
              for row in reader:
-                 times1.append(float(row[0]))
+                 val.append(float(row[0]))
 
-        times2 = []
+        val2 = []
         with open(file2) as csv_reader:
              reader = csv.reader(csv_reader, delimiter=';')
 
              for row in reader:
-                 times2.append(float(row[0]))
+                 val2.append(float(row[0]))
 
-        minlenght = len(times1) if len(times1) < len(times2) else len(times2)
 
-        diffvect = np.subtract(times1[0:minlenght], times2[0:minlenght])
 
-        diffvect = np.asarray(diffvect)
 
-        avgdiff = np.average(diffvect)
 
-        self.resultavgdiff = abs(avgdiff)
-        print(self.resultavgdiff)
+
+
+        if max(val) < max(val2):
+            val,val2 = val2,val
+            print("change")
+
+        val = np.asarray(val[len(val2)//4:len(val)*3//4])
+        val2 = np.asarray(val2[len(val2)//4:len(val2)*3//4])
+
+        minlenght = len(val) if len(val) < len(val2) else len(val2)
+
+        MyFFT = fft(val[0:minlenght])
+        MyFFT2 = fft(val2[0:minlenght])
+
+
+
+
+        MyFFT = MyFFT[0:len(MyFFT)//2+1]
+        MyFFT2 = MyFFT2[0:len(MyFFT2)//2+1]
+
+        RefFFT = 20*np.log10(MyFFT)
+        self.freq = np.linspace(0.0, 1.0/(2.0*self.deltaT), len(MyFFT))
+        freqmask = self.freq<3
+
+
+        self.peaks,_ = find_peaks(RefFFT[freqmask], distance=43e-3/self.freq[1])
+
+
+        self.UnwAngle = np.unwrap(np.angle( MyFFT) - np.angle(MyFFT2))
+
+
+
+
+        self.resultavgdiff = np.true_divide(np.diff(self.UnwAngle[self.peaks[0:40]]), np.diff(self.freq[self.peaks[0:40]]))/2/np.pi
+
+
+
 
         if Refrect:
             self.label.setText("Instert d / mm")
@@ -205,11 +236,19 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         input = float(self.lineEditValue.text())
 
         if self.Refrect:
-            result = self.resultavgdiff * 1e-12 * 299792458 / (input * 1e-3) + 1
+            result = np.abs(self.resultavgdiff *1e-12* 299792458 / (input * 1e-3)) + 1
         else:
             result = self.resultavgdiff * 1e-12 * 299792458 / (1 - input)
 
-        print(result)
+        plt.subplot(2,1,1)
+        plt.plot(self.freq[self.peaks[0:40]],self.UnwAngle[self.peaks[0:40]])
+        plt.grid()
+        plt.subplot(2,1,2)
+        plt.plot(self.freq[self.peaks[0:39]], result)
+        plt.grid()
+        plt.show()
+        plt.clf()
+        plt.close()
 
 class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
@@ -448,7 +487,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.xticks(np.arange(min(freq), max(freq)+1, 0.5e12))
         plt.xlim([0, 7e12])
         plt.grid(which ='both',axis='both')
-        amp = my_fft #- noicemean#- max(my_fft)
+        amp = my_fft - max(my_fft)#- noicemean
 
         print(freq[amp >= np.max(amp)])
 

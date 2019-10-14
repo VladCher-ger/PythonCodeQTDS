@@ -1,5 +1,4 @@
 Laser RepRate [GHz]; 43.24
-Stage speed [mm/s]; 60.0000
-Stage speed [mm/s]; 60.0000
-Number of paths; 2
+Stage speed [mm/s]; 120
+Number of optical paths; 2
 Running Avarage; 64

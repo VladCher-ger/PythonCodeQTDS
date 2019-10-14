@@ -164,8 +164,6 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
                 self.path = filedialog.asksaveasfilename()
                 self.folder =self.path + now.strftime("_%b_%d_%Y_%H_%M_%S")
                 os.mkdir(self.folder)
-                os.mkdir(self.folder+"\Forward")
-                os.mkdir(self.folder+"\Backward")
 
 
                 copyfile('.\cnfg.txt', self.folder+'\cnfg.txt')
@@ -215,18 +213,8 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             for i in range(0, len(RawData)-1,2):
                 self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
 
-            if(abs(min(self.Data)) < abs(max(self.Data))):
-                self.Data.reverse()
-
-
-
             #Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
-            if (self.MotorCntrl.Positions[0]>self.MotorCntrl.Positions[3]):
-                self.Data = np.true_divide(self.Data, (-4096/3.3))
-                Reverse = True
-            else:
-                Reverse = False
-                self.Data = np.true_divide(self.Data, (4096 / 3.3))
+            self.Data = np.true_divide(self.Data, (4096/3.3))
             #Erstellen einer Zeitachse aus Equidistanten Messpunkten
             self.time = np.arange(0, len(self.Data), 1)*self.const
             #Abbilden der Kurve
@@ -234,7 +222,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
             #Speichern, oder nicht
             if self.StoreMeas.isChecked():
-                CSVProcess(self.Data, self.folder+"\Forward", str(self.progressBar.value())) if Reverse==False  else CSVProcess(self.Data, self.folder+"\Backward", str(self.progressBar.value()))
+                CSVProcess(self.Data, self.folder, self.progressBar.value())
 
             #Life FFT oder nicht
             if self.lifefft or not self.StoreMeas.isChecked():
@@ -315,7 +303,7 @@ class TimerThread(QtCore.QThread):
 def CSVProcess( data, folder, number):
 
     a = np.asarray(data)
-    np.savetxt(folder+"/"+number+".csv" ,a ,fmt="%f" ,delimiter=";")
+    np.savetxt(folder+"/"+str(number)+".csv" ,a ,fmt="%f" ,delimiter=";")
 
     del data
     del folder
