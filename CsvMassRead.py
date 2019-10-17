@@ -185,16 +185,16 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         plt.figure(figsize=(20,25))
         self.gs = plt.GridSpec(2,2)
         plt.subplot(self.gs[0,0])
-        plt.plot( self.f[fmask], val[fmask],  label = 'Referenz')
-        plt.plot( f2[f2mask], val2[f2mask] ,label= 'Probe')
+        plt.plot( self.f[fmask]*1e-12, val[fmask],  label = 'Referenz')
+        plt.plot( f2[f2mask]*1e-12, val2[f2mask] ,label= 'Probe')
         plt.xlabel("f / THz")
         plt.ylabel(r"20Log(I$_{det}$3*10$^3 \frac{V}{A}$)")
         plt.legend()
         plt.grid()
 
         plt.subplot(self.gs[0,1])
-        plt.plot(self.f[self.peaks], val[self.peaks],"x", label = 'Referenz')
-        plt.plot( f2[self.peaks2], val2[self.peaks2],"o" , label = 'Probe')
+        plt.plot(self.f[self.peaks]*1e-12, val[self.peaks],"x", label = 'Referenz')
+        plt.plot( f2[self.peaks2]*1e-12, val2[self.peaks2],"o" , label = 'Probe')
         plt.xlabel("f / THz")
         plt.ylabel(r"20Log(I$_{det}$3*10$^3 \frac{V}{A}$)")
         plt.legend()
@@ -215,7 +215,7 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         alpha = np.true_divide(self.absorb, 10*np.log10(np.e)*d)
 
         plt.subplot(self.gs[1,:])
-        plt.plot(self.f[self.peaks[0:35]], alpha, '--', Marker = 'x')
+        plt.plot(self.f[self.peaks[0:35]]*1e-12, alpha, '--', Marker = 'x')
         plt.xlabel("f / THz")
         plt.ylabel("Absorbtion / $cm^{-1}$")
         plt.grid()
@@ -308,12 +308,12 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=21/self.deltaT)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=19/self.deltaT)
 
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 21 or np.max(distance)*self.deltaT >25:
+                if np.min(distance)*self.deltaT< 18 or np.max(distance)*self.deltaT >22:
 
                     continue
             except:
@@ -642,8 +642,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         self.close()
         plt.grid()
         plt.show()
-        plt.clf()
-        plt.close()
+
         gc.collect()
         return
 

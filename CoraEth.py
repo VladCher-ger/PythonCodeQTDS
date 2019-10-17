@@ -13,8 +13,8 @@ class CoraZ7Eth():
        # ans,_ = srp(Ether(dst=MAC)/ARP(pdst="134.91.61.0/24"), timeout=1, verbose=False)
 
         try:
-            IP = ans[0][1].psrc
-            print("Hier")
+            #IP = ans[0][1].psrc
+            IP = '192.168.1.10'
             #print(IP)
         except:
             IP = '192.168.1.10'

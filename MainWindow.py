@@ -109,6 +109,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.MotorCntrl.MotorThread.StopAcquisition.connect(self.StopMeas)
         self.actionThorlabs.triggered.connect(self.MotorCntrl.showself)
         self.actionThorlabs.setShortcut("Ctrl+M")
+        FileHandle.updatecnfg(attribute='Number', value=2)
 
 
     #Stellt ein Eth verbindung mit dem Board her. Übergibt Dabei Portnummer und MAC-Addresse aus GUI

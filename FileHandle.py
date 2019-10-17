@@ -6,11 +6,18 @@ def updatecnfg( attribute=None, value=0.0):
     f.close()
 
     f = open('cnfg.txt', 'w+')
-    for i in line:
-        if attribute in i:
-            f.write('Stage speed [mm/s]; {:.4f}\n'.format(value))
-        else:
-            f.write(i)
+    if attribute == "speed":
+        for i in line:
+            if attribute in i:
+                f.write('Stage speed [mm/s]; {:.4f}\n'.format(value))
+            else:
+                f.write(i)
+    else:
+        for i in line:
+            if attribute in i:
+                f.write(attribute + ';'+str(value)+'\n')
+            else:
+                f.write(i)
     f.close()
 
     with open('cnfg.txt', 'r') as f:
