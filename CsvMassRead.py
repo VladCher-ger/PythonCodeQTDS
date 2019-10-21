@@ -597,9 +597,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
         plt.show()
 
-        import matplotlib2tikz
 
-        matplotlib2tikz.save("test.tex")
 
     def findPeakPos(self):
 
