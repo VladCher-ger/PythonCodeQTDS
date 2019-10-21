@@ -67,7 +67,8 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
         #Zurechtschneiden der Zeitaufnahme für FFT berechnungnen ohne Fenster
         self.actionFull.triggered.connect(lambda: self.PostCalc.ZeroFit(False))
-        self.actionSmall.triggered.connect(lambda: self.PostCalc.ZeroFit(True))
+        #self.actionSmall.triggered.connect(lambda: self.PostCalc.ZeroFit(True))
+        self.actionSmall.triggered.connect( self.PostCalc.SelfAvarage)
 
         #Berechnung der Mittleren Peakpositionen
         self.actionFind_Peaks.triggered.connect(self.PostCalc.findPeakPos)

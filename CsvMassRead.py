@@ -313,17 +313,17 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 18 or np.max(distance)*self.deltaT >22:
+                if np.min(distance)*self.deltaT< 21 or np.max(distance)*self.deltaT >25:
 
                     continue
             except:
                 continue
 
-            if(min(peaks)<50):
+            if(min(peaks)<20):
 
                 continue
             print(i)
-            valarray = valarray[peaks[0]-50:-1]
+            valarray = valarray[peaks[0]-20:-1]
 
             cutval.append(valarray)
         #############################################
@@ -353,13 +353,20 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             avg = avg + cutval[number]
             plt.plot(Timeaxis, cutval[number])
 
+
         avg = np.true_divide(avg, len(cutval))
         print(len(cutval))
+        plt.xlabel(r"Zeit t [ps]")
+        plt.ylabel(r"V$_{\rm{TIA}}$")
         ###################################################################################
-        plt.subplot(2,1,2)
-        plt.plot(Timeaxis, avg)
-        plt.grid(which ='both',axis='both')
 
+        plt.subplot(2,1,2)
+        plt.plot(Timeaxis, avg, label= 'Mittelwert')
+        plt.grid(which ='both',axis='both')
+        plt.xlabel(r"Zeit t [ps]")
+        plt.ylabel(r"V$_{\rm{TIA}}$")
+        plt.xlabel(r"Zeit t [ps]")
+        plt.legend()
         self.close()
         try:
             savefile = filedialog.asksaveasfile(mode='w',defaultextension=".csv")
@@ -428,6 +435,85 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.plot(Timeaxis_window, avg_window, Timeaxis_window[-1]+Timeaxis_window, avg_window)
         plt.show()
 
+    def SelfAvarage(self):
+
+        avg = []
+
+        file_path = filedialog.askopenfilename()
+
+        folder = file_path.split('/')
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+        except:
+            self.deltaT = FileHandle.getResolution()
+
+        try:
+            with open(file_path) as csv_file:
+                reader = csv.reader(csv_file, delimiter=';')
+
+                for row in reader:
+                    if len(row) == 1:
+                        avg.append(float(row[0]))
+                    else:
+                        avg.append(float(row[1]))
+        except:
+            return
+
+
+
+        avg = np.asarray(avg)
+        Timeaxis = np.arange(0, len(avg), 1) * self.deltaT
+        maxval = max(avg)
+        peaks, _ = find_peaks(avg, height=(maxval * 0.8, maxval), distance=19/self.deltaT)
+        print(peaks)
+        Zeroes = []
+        for n in peaks[0:-1]:
+
+            zero = np.where(np.diff(np.sign(avg[n:n + 300])))[0] + n
+
+            Zeroes.append(zero[0])
+
+
+        print(Zeroes)
+        plt.subplot(2, 1, 1)
+        plt.plot(Timeaxis,avg)
+        plt.plot(Timeaxis[Zeroes],avg[Zeroes],'x')
+        print("here")
+        length = len( avg[Zeroes[0]:Zeroes[1]])
+        print(length)
+
+        for n in range(len(Zeroes)-1):
+
+            if len( avg[Zeroes[n]:Zeroes[n+1]]) < length:
+                length = len( avg[Zeroes[n]:Zeroes[n+1]])
+
+        print(length)
+
+        sum = np.zeros(length)
+        cnt=0
+        for n in range(len(Zeroes)):
+            try:
+                sum = sum + avg[Zeroes[n]:Zeroes[n]+length]
+            except:
+                continue
+            cnt = cnt + 1
+
+        sum = sum/cnt
+        print(cnt)
+        Timeaxis= Timeaxis = np.arange(0, len(sum), 1) * self.deltaT
+        plt.subplot(2, 1, 2)
+        plt.plot(Timeaxis,sum)
+        plt.show()
+
     def MakeFFT(self, window = None):
 
         avg = []
@@ -478,7 +564,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         my_fft = np.abs(my_fft/len(avg))
         my_fft = 2*my_fft[1:len(avg)//2+1]
         my_fft = 20*np.log10(my_fft)
-        freqmask = freq > 7e12
+        freqmask = freq > 2.5e12
         noicemean = np.mean(my_fft[freqmask])
 
         ########################################################
@@ -487,9 +573,9 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.xticks(np.arange(min(freq), max(freq)+1, 0.5e12))
         plt.xlim([0, 7e12])
         plt.grid(which ='both',axis='both')
-        amp = my_fft - max(my_fft)#- noicemean
+        amp = my_fft #- max(my_fft)#- noicemean
 
-        print(freq[amp >= np.max(amp)])
+        print(noicemean)
 
         plt.plot(freq, amp)
 
@@ -583,8 +669,10 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
 
         file_path = filedialog.askopenfilenames()
-
-        folder = file_path[0].split('/')
+        try:
+            folder = file_path[0].split('/')
+        except:
+            return
 
         path = ''
         for i in range(0, len(folder) - 1):
@@ -596,9 +684,10 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                 for line in f.readlines():
                     category, value = line.strip().split(';')
                 self.deltaT = float(value)
+                print(self.deltaT)
         except:
             self.deltaT = FileHandle.getResolution()
-
+            print(self.deltaT)
         self.LoadCsvBar.setMaximum(len(file_path))
         self.show()
 
@@ -627,7 +716,8 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                     Timearray = np.arange(0,len(avgarray),1)*self.deltaT
 
                 plt.plot(Timearray, avgarray)
-
+                plt.xlabel(r"Zeit t [ps]")
+                plt.ylabel(r"V$_{\rm{TIA}}$")
                 del Timearray
                 del avgarray
                 del avg
