@@ -25,6 +25,9 @@ from shutil import copyfile
 
 import gc
 
+import sys
+
+sys.setrecursionlimit(1500)
 
 class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 

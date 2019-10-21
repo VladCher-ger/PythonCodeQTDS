@@ -509,9 +509,17 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
         sum = sum/cnt
         print(cnt)
-        Timeaxis= Timeaxis = np.arange(0, len(sum), 1) * self.deltaT
+        Timeaxis = np.arange(0, len(sum), 1) * self.deltaT
         plt.subplot(2, 1, 2)
-        plt.plot(Timeaxis,sum)
+        plt.plot(Timeaxis, sum)
+
+
+        savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv")
+        print(savefile)
+        with open(savefile.name, "w+") as f:
+           for val in sum:
+               f.write(str(val)+"\n")
+
         plt.show()
 
     def MakeFFT(self, window = None):
@@ -559,19 +567,20 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         else:
             my_fft = fft(avg*window(len(avg)))
 
-        freq = np.linspace(0.0, 1.0/(2.0*self.deltaT*1e-12), len(avg)//2)
+        freq = np.linspace(0.0, 1.0/(2.0*self.deltaT), len(avg)//2)
 
         my_fft = np.abs(my_fft/len(avg))
         my_fft = 2*my_fft[1:len(avg)//2+1]
         my_fft = 20*np.log10(my_fft)
-        freqmask = freq > 2.5e12
+        freqmask = freq > 2.5
         noicemean = np.mean(my_fft[freqmask])
 
         ########################################################
         plt.subplot(2,1,2)
-        plt.xlim([0, 8e12])
-        plt.xticks(np.arange(min(freq), max(freq)+1, 0.5e12))
-        plt.xlim([0, 7e12])
+        plt.xlim([0, 5])
+        plt.xticks(np.arange(min(freq), max(freq)+1, 0.5))
+        plt.xlim([0, 5])
+        plt.xlabel(r"Frequenz f [THz]")
         plt.grid(which ='both',axis='both')
         amp = my_fft #- max(my_fft)#- noicemean
 
@@ -587,6 +596,10 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             None
 
         plt.show()
+
+        import matplotlib2tikz
+
+        matplotlib2tikz.save("test.tex")
 
     def findPeakPos(self):
 
@@ -709,6 +722,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
                                 oneax = False
                             else:
                                 avg.append(float(row[0]))
+
 
                 avgarray = np.asarray(avg)
 
