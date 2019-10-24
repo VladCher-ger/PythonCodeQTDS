@@ -1,4 +1,6 @@
 import os
+from tkinter import filedialog
+import numpy
 
 def updatecnfg( attribute=None, value=0.0):
     f = open('cnfg.txt', 'r+')
@@ -96,4 +98,22 @@ def getAttribute(attribute=None):
                     return float(value)
     else:
         return 30
+
+def SaveData( time, data, path=None):
+
+    time = numpy.asarray(time)
+    data = numpy.asarray(data)
+
+    if path == None:
+        savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv").name
+    else:
+        savefile = path
+        print(savefile)
+
+    try:
+        with open(savefile, "w+") as f:
+           for t,val in zip(time,data):
+               f.write(str(t)+";"+str(val)+"\n")
+    except:
+        None
 

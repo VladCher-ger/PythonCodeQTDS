@@ -60,7 +60,10 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
                                                         #Toolbaractionen mit Funktionsverbindungen
         self.actionLoad_Graph.triggered.connect(self.PostCalc.LoadPLot)
+
         self.actionMake_AVG.triggered.connect(self.PostCalc.MakeAvg)
+        self.actionMake_AVGSingle.triggered.connect(self.PostCalc.SelfAvarage)
+
 
         #MakeFFT bleibt immer gleich, übergibt eine Fensterfunktion nach Auaswahl an die FFT
         self.actionBlackman.triggered.connect(lambda: self.PostCalc.MakeFFT(windows.blackman))
@@ -70,8 +73,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
         #Zurechtschneiden der Zeitaufnahme für FFT berechnungnen ohne Fenster
         self.actionFull.triggered.connect(lambda: self.PostCalc.ZeroFit(False))
-        #self.actionSmall.triggered.connect(lambda: self.PostCalc.ZeroFit(True))
-        self.actionSmall.triggered.connect( self.PostCalc.SelfAvarage)
+        self.actionSmall.triggered.connect(lambda: self.PostCalc.ZeroFit(True))
 
         #Berechnung der Mittleren Peakpositionen
         self.actionFind_Peaks.triggered.connect(self.PostCalc.findPeakPos)
@@ -123,8 +125,11 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             self.EthDevice = CoraEth.CoraZ7Eth()
             #Remote Start der messung
             self.RunMeas.clicked.connect(self.StartRun)
-            FileHandle.updatecnfg(attribute='Number', value=1)
-            FileHandle.updatecnfg(attribute='speed', value=30)
+            FileHandle.updatecnfg(attribute='Number of optical paths', value=1)
+            FileHandle.updatecnfg(attribute='Stage speed [mm/s]', value=30)
+            FileHandle.updatecnfg(attribute='Running Avarage', value=256)
+
+
             #Erzeugung eines Threads zum zeitlichen Buffern zwischen Messungen
             self.TimerThread = TimerThread()
             #Automatisches Startet einer neuen Messung, wenn die ANzahl an gewünschten Messungen noch nicht Erfolgt ist
@@ -165,9 +170,9 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         try:
             #Speicher Dialog für die Messung. Erstellt einen Ordner mit dem Eingegebenen Namen und fügt einen Zeitstempel hinzu.
             if self.StoreMeas.isChecked():
-                now = datetime.datetime.now()
+                #now = datetime.datetime.now()
                 self.path = filedialog.asksaveasfilename()
-                self.folder =self.path + now.strftime("_%b_%d_%Y_%H_%M_%S")
+                self.folder =self.path #+ now.strftime("_%b_%d_%Y_%H_%M_%S")
                 os.mkdir(self.folder)
 
 
@@ -215,8 +220,11 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         if len(RawData) > 50:
             # Wählt nach den Einstellungen aus, ob life FFt oder nicht
 
+            #for i in range(0, len(RawData)-1,2):
+            #    self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
+
             for i in range(0, len(RawData)-1,2):
-                self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
+                self.Data.append(int.from_bytes((RawData[i],RawData[i+1]),byteorder='little', signed=True))
 
             #Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
             self.Data = np.true_divide(self.Data, (4096/3.3))
@@ -227,7 +235,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
             #Speichern, oder nicht
             if self.StoreMeas.isChecked():
-                CSVProcess(self.Data, self.folder, self.progressBar.value())
+                CSVProcess(self.time, self.Data, self.folder, self.progressBar.value())
 
             #Life FFT oder nicht
             if self.lifefft or not self.StoreMeas.isChecked():
@@ -305,10 +313,12 @@ class TimerThread(QtCore.QThread):
 
 
 #Speichern der Daten in zuvor Erstellten Ordner mit Vortlaufender Nummerierung
-def CSVProcess( data, folder, number):
+def CSVProcess(time, data, folder, number):
 
-    a = np.asarray(data)
-    np.savetxt(folder+"/"+str(number)+".csv" ,a ,fmt="%f" ,delimiter=";")
+    #a = np.asarray(data)
+    #np.savetxt(folder+"/"+str(number)+".csv" ,a ,fmt="%f" ,delimiter=";")
+
+    FileHandle.SaveData(time, data, folder+"/"+str(number)+".csv")
 
     del data
     del folder

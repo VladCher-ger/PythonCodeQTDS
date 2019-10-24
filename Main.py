@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Cherniak\Desktop\QTDSoZSync\venv\Main.ui'
+# Form implementation generated from reading ui file 'C:\Users\Cherniak\Desktop\PythonCodeQTDS\Main.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -111,6 +111,8 @@ class Ui_MainWindow(object):
         self.menuFFT.setObjectName("menuFFT")
         self.menuZero_Fit = QtWidgets.QMenu(self.menuPostCalc)
         self.menuZero_Fit.setObjectName("menuZero_Fit")
+        self.menuMake_AVG = QtWidgets.QMenu(self.menuPostCalc)
+        self.menuMake_AVG.setObjectName("menuMake_AVG")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -123,8 +125,6 @@ class Ui_MainWindow(object):
         self.actionOz_ODL.setObjectName("actionOz_ODL")
         self.actionLoad_Graph = QtWidgets.QAction(MainWindow)
         self.actionLoad_Graph.setObjectName("actionLoad_Graph")
-        self.actionMake_AVG = QtWidgets.QAction(MainWindow)
-        self.actionMake_AVG.setObjectName("actionMake_AVG")
         self.actionBlackman = QtWidgets.QAction(MainWindow)
         self.actionBlackman.setObjectName("actionBlackman")
         self.actionHanning = QtWidgets.QAction(MainWindow)
@@ -147,7 +147,14 @@ class Ui_MainWindow(object):
         self.actionCalc_thikness.setObjectName("actionCalc_thikness")
         self.actionCalc_Absorbtion = QtWidgets.QAction(MainWindow)
         self.actionCalc_Absorbtion.setObjectName("actionCalc_Absorbtion")
+        self.actionConfiguration = QtWidgets.QAction(MainWindow)
+        self.actionConfiguration.setObjectName("actionConfiguration")
+        self.actionMake_AVGSingle = QtWidgets.QAction(MainWindow)
+        self.actionMake_AVGSingle.setObjectName("actionMake_AVGSingle")
+        self.actionMake_AVG = QtWidgets.QAction(MainWindow)
+        self.actionMake_AVG.setObjectName("actionMake_AVG")
         self.menuMenu.addAction(self.actionExit)
+        self.menuMenu.addAction(self.actionConfiguration)
         self.menuMotorCntrl.addAction(self.actionThorlabs)
         self.menuMotorCntrl.addAction(self.actionOz_ODL)
         self.menuFFT.addAction(self.actionBlackman)
@@ -157,8 +164,10 @@ class Ui_MainWindow(object):
         self.menuFFT.addAction(self.actionNone)
         self.menuZero_Fit.addAction(self.actionFull)
         self.menuZero_Fit.addAction(self.actionSmall)
+        self.menuMake_AVG.addAction(self.actionMake_AVGSingle)
+        self.menuMake_AVG.addAction(self.actionMake_AVG)
         self.menuPostCalc.addAction(self.actionLoad_Graph)
-        self.menuPostCalc.addAction(self.actionMake_AVG)
+        self.menuPostCalc.addAction(self.menuMake_AVG.menuAction())
         self.menuPostCalc.addAction(self.menuFFT.menuAction())
         self.menuPostCalc.addAction(self.menuZero_Fit.menuAction())
         self.menuPostCalc.addSeparator()
@@ -184,8 +193,8 @@ class Ui_MainWindow(object):
         self.DelayT.setText(_translate("MainWindow", "None..."))
         self.ConnectCoraB.setToolTip(_translate("MainWindow", "<html><head/><body><p>Connects to FPGA with ARM board.<br/>IP may varie</p></body></html>"))
         self.ConnectCoraB.setText(_translate("MainWindow", "Connect to Cora"))
-        self.IPT.setToolTip(_translate("MainWindow", "<html><head/><body><p>MAC-Addr. of the Device</p></body></html>"))
-        self.IPT.setText(_translate("MainWindow", "00:18:3E:02:F0:EB"))
+        self.IPT.setToolTip(_translate("MainWindow", "<html><head/><body><p>Ip. Addr. of FPGA-Board</p></body></html>"))
+        self.IPT.setText(_translate("MainWindow", "134.91.61.197"))
         self.PORTT.setToolTip(_translate("MainWindow", "<html><head/><body><p>Portnumber</p></body></html>"))
         self.PORTT.setText(_translate("MainWindow", "7"))
         self.RunMeas.setToolTip(_translate("MainWindow", "<html><head/><body><p>Runs the measurement routine for n times of the right value.</p></body></html>"))
@@ -199,11 +208,11 @@ class Ui_MainWindow(object):
         self.menuPostCalc.setTitle(_translate("MainWindow", "PostCalc"))
         self.menuFFT.setTitle(_translate("MainWindow", "FFT"))
         self.menuZero_Fit.setTitle(_translate("MainWindow", "Zero Fit"))
+        self.menuMake_AVG.setTitle(_translate("MainWindow", "Make AVG"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionThorlabs.setText(_translate("MainWindow", "Thorlabs"))
         self.actionOz_ODL.setText(_translate("MainWindow", "Oz ODL"))
         self.actionLoad_Graph.setText(_translate("MainWindow", "Load Graph"))
-        self.actionMake_AVG.setText(_translate("MainWindow", "Make AVG"))
         self.actionBlackman.setText(_translate("MainWindow", "Blackman"))
         self.actionHanning.setText(_translate("MainWindow", "Hanning"))
         self.actionHann.setText(_translate("MainWindow", "Hann"))
@@ -215,6 +224,9 @@ class Ui_MainWindow(object):
         self.actionCalc_refrectiv.setText(_translate("MainWindow", "Calc refrectiv"))
         self.actionCalc_thikness.setText(_translate("MainWindow", "Calc thikness"))
         self.actionCalc_Absorbtion.setText(_translate("MainWindow", "Calc Absorbtion"))
+        self.actionConfiguration.setText(_translate("MainWindow", "Configuration"))
+        self.actionMake_AVGSingle.setText(_translate("MainWindow", "Single Meas"))
+        self.actionMake_AVG.setText(_translate("MainWindow", "Multi Meas"))
 
 
 if __name__ == "__main__":

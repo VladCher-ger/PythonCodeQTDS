@@ -69,7 +69,7 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
 
         if max(val) < max(val2):
             val,val2 = val2,val
-            print("change")
+
 
         val = np.asarray(val[len(val2)//4:len(val)*3//4])
         val2 = np.asarray(val2[len(val2)//4:len(val2)*3//4])
@@ -313,7 +313,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 21 or np.max(distance)*self.deltaT >25:
+                if np.min(distance)*self.deltaT< 19 or np.max(distance)*self.deltaT >25:
 
                     continue
             except:
@@ -368,11 +368,9 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         plt.xlabel(r"Zeit t [ps]")
         plt.legend()
         self.close()
-        try:
-            savefile = filedialog.asksaveasfile(mode='w',defaultextension=".csv")
-            np.savetxt(savefile, avg , delimiter=";")
-        except:
-            None
+
+        FileHandle.SaveData(Timeaxis, avg)
+
         plt.show()
 
     def ZeroFit(self, small = False):
@@ -474,7 +472,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         Timeaxis = np.arange(0, len(avg), 1) * self.deltaT
         maxval = max(avg)
         peaks, _ = find_peaks(avg, height=(maxval * 0.8, maxval), distance=19/self.deltaT)
-        print(peaks)
+
         Zeroes = []
         for n in peaks[0:-1]:
 
@@ -483,11 +481,11 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             Zeroes.append(zero[0])
 
 
-        print(Zeroes)
+
         plt.subplot(2, 1, 1)
         plt.plot(Timeaxis,avg)
         plt.plot(Timeaxis[Zeroes],avg[Zeroes],'x')
-        print("here")
+
         length = len( avg[Zeroes[0]:Zeroes[1]])
         print(length)
 
@@ -508,17 +506,12 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
             cnt = cnt + 1
 
         sum = sum/cnt
-        print(cnt)
+
         Timeaxis = np.arange(0, len(sum), 1) * self.deltaT
         plt.subplot(2, 1, 2)
         plt.plot(Timeaxis, sum)
 
-
-        savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv")
-        print(savefile)
-        with open(savefile.name, "w+") as f:
-           for val in sum:
-               f.write(str(val)+"\n")
+        FileHandle.SaveData(Timeaxis, sum)
 
         plt.show()
 
