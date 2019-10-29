@@ -105,7 +105,10 @@ def SaveData( time, data, path=None):
     data = numpy.asarray(data)
 
     if path == None:
-        savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv").name
+        try:
+            savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv").name
+        except:
+            return
     else:
         savefile = path
         print(savefile)

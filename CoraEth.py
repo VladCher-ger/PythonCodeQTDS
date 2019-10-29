@@ -23,6 +23,7 @@ class CoraZ7Eth():
         self.Cora = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Cora.settimeout(2)
         try:
+            print(IP)
             self.Cora.connect((IP, PORT))
             self.EthThread = EthThread((IP, PORT))
             self.Cora.sendall(b'Init')
@@ -96,7 +97,6 @@ class EthThread(QtCore.QThread):
                 except:
                     self.Error.emit("Error")
                     self.DataReady.emit(bytearray())
-                    print("end")
                     del self.rec
                     return
 
@@ -104,14 +104,12 @@ class EthThread(QtCore.QThread):
             print(len(self.rec))
             if len(self.rec)<8000:
                 self.Error.emit("Error")
-                print("end")
                 self.DataReady.emit(bytearray())
                 del self.rec
                 return
             else:
                 self.DataReady.emit(self.rec)
                 del self.rec
-            print("end")
         return
 
     def KillSelf(self):

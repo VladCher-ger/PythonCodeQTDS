@@ -595,7 +595,6 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
     def findPeakPos(self):
 
 
-
         file_path = filedialog.askopenfilenames()
 
         folder = file_path[0].split('/')
@@ -615,8 +614,9 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
         self.LoadCsvBar.setMaximum(len(file_path))
         self.show()
-        avg_peak=[]
-        minlength = 0
+        diff_peaks=[]
+        pos_array = []
+        stringdata=""
         for numb,i in enumerate(file_path):
             val = []
             self.LoadCsvBar.setValue(numb+1)
@@ -639,27 +639,51 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.8, maxval), distance=200)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.8, maxval), distance=19/self.deltaT)
 
-            if minlength == 0 or minlength > len(peaks):
-                minlength = len(peaks)
 
-            avg_peak.append(peaks)
 
-        helparray = np.zeros(minlength)
-        for i in avg_peak:
-            helparray = helparray + i[0:minlength]
 
-        helparray = helparray/len(file_path)*self.deltaT
+            diff_peaks.append(peaks*self.deltaT)
+
+            pos_array= np.asarray( list(peaks*self.deltaT))
+
+            for i in pos_array:
+                stringdata = stringdata + str(i) +";"
+
+            stringdata = stringdata +"\n"
+
+
+
+        diff_peaks = list(diff_peaks)
+
+
+
+
+
+        diff = []
+        for i in diff_peaks:
+                diff= np.append(diff,i[1:-1]-i[0:-2])
+
+
+        FileHandle.SaveData(time=range(len(diff)), data=diff)
+
+        try:
+            savefile = filedialog.asksaveasfile(mode='w', defaultextension=".csv").name
+
+            with open(savefile, "w+") as f:
+                f.write(stringdata)
+                #for val in stringdata:
+                 #  print(val)
+                  # f.write(val)
+        except:
+            return
 
         self.close()
 
-        helparray = np.asarray(helparray)
-        try:
-            savefile = filedialog.asksaveasfile(mode='w',defaultextension=".csv")
-            np.savetxt(savefile, helparray , delimiter=";")
-        except:
-            None
+
+
+
 
     def CalcN(self):
         w = QDialog()

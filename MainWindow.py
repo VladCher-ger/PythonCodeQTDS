@@ -224,10 +224,13 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             #    self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
 
             for i in range(0, len(RawData)-1,2):
-                self.Data.append(int.from_bytes((RawData[i],RawData[i+1]),byteorder='little', signed=True))
+                self.Data.append(int.from_bytes((RawData[i],RawData[i+1]),byteorder='little', signed=False))
 
             #Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
-            self.Data = np.true_divide(self.Data, (4096/3.3))
+            self.Data = np.true_divide(self.Data, (65536/3.3))
+
+            diff = self.Data[0:-1-1]-self.Data[1:-1]
+            print(np.min(np.abs(diff)))
             #Erstellen einer Zeitachse aus Equidistanten Messpunkten
             self.time = np.arange(0, len(self.Data), 1)*self.const
             #Abbilden der Kurve
