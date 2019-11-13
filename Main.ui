@@ -141,10 +141,10 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MAC-Addr. of the Device&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ip. Addr. of FPGA-Board&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>00:18:3E:02:F0:EB</string>
+           <string>134.91.61.197</string>
           </property>
          </widget>
         </item>
@@ -333,8 +333,15 @@
      <addaction name="actionFull"/>
      <addaction name="actionSmall"/>
     </widget>
+    <widget class="QMenu" name="menuMake_AVG">
+     <property name="title">
+      <string>Make AVG</string>
+     </property>
+     <addaction name="actionMake_AVGSingle"/>
+     <addaction name="actionMake_AVG"/>
+    </widget>
     <addaction name="actionLoad_Graph"/>
-    <addaction name="actionMake_AVG"/>
+    <addaction name="menuMake_AVG"/>
     <addaction name="menuFFT"/>
     <addaction name="menuZero_Fit"/>
     <addaction name="separator"/>
@@ -431,6 +438,16 @@
   <action name="actionConfiguration">
    <property name="text">
     <string>Configuration</string>
+   </property>
+  </action>
+  <action name="actionMake_AVGSingle">
+   <property name="text">
+    <string>Single Meas</string>
+   </property>
+  </action>
+  <action name="actionMake_AVG">
+   <property name="text">
+    <string>Multi Meas</string>
    </property>
   </action>
  </widget>
