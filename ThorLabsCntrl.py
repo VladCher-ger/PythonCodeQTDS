@@ -83,7 +83,7 @@ class MotorCntrlThread(QtCore.QThread):
         self.Positions = Positions
 
     def run(self):
-        print(self.Positions)
+
 
         if self.Positions[0]<self.Positions[3]:
 

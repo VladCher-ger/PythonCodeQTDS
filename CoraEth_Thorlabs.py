@@ -1,7 +1,7 @@
 import socket
 from PyQt5 import QtCore
 import time
-#from scapy.all import ARP, Ether, srp
+from scapy.all import ARP, Ether, srp
 
 class CoraZ7Eth():
     def __init__(self, parent=None):
@@ -12,8 +12,7 @@ class CoraZ7Eth():
         #ans,_ = srp(Ether(dst=MAC)/ARP(pdst="134.91.61.0/24"), timeout=1, verbose=False)
 
         try:
-            #IP = ans[0][1].psrc
-            IP = '192.168.1.10'
+            IP = ans[0][1].psrc
             #print(IP)
         except:
             #return "Search unsuccesful\n"
@@ -73,8 +72,14 @@ class EthThread(QtCore.QThread):
                 if(gesval>300000):
                     self.running = False
                     print("Overflow")
+
+                    for i in range(0,20):
+                        self.msleep(0.5)
+                        if self.running==False:
+                            continue
+
                     self.rec.clear()
-                self.msleep(15)
+
                 Cora.sendall(b'flush')
                 try:
                     buff = Cora.recv(4096)

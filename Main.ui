@@ -333,13 +333,6 @@
      <addaction name="actionFull"/>
      <addaction name="actionSmall"/>
     </widget>
-    <widget class="QMenu" name="menuMake_AVG">
-     <property name="title">
-      <string>Make AVG</string>
-     </property>
-     <addaction name="actionMake_AVGSingle"/>
-     <addaction name="actionMake_AVG"/>
-    </widget>
     <addaction name="actionLoad_Graph"/>
     <addaction name="menuMake_AVG"/>
     <addaction name="menuFFT"/>
@@ -433,16 +426,6 @@
   <action name="actionConfiguration">
    <property name="text">
     <string>Configuration</string>
-   </property>
-  </action>
-  <action name="actionMake_AVGSingle">
-   <property name="text">
-    <string>Single Meas</string>
-   </property>
-  </action>
-  <action name="actionMake_AVG">
-   <property name="text">
-    <string>Multi Meas</string>
    </property>
   </action>
  </widget>

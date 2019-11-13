@@ -25,9 +25,6 @@ from shutil import copyfile
 
 import gc
 
-import sys
-
-sys.setrecursionlimit(5000)
 
 class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
@@ -60,10 +57,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
                                                         #Toolbaractionen mit Funktionsverbindungen
         self.actionLoad_Graph.triggered.connect(self.PostCalc.LoadPLot)
-
         self.actionMake_AVG.triggered.connect(self.PostCalc.MakeAvg)
-        self.actionMake_AVGSingle.triggered.connect(self.PostCalc.SelfAvarage)
-
 
         #MakeFFT bleibt immer gleich, übergibt eine Fensterfunktion nach Auaswahl an die FFT
         self.actionBlackman.triggered.connect(lambda: self.PostCalc.MakeFFT(windows.blackman))
@@ -115,7 +109,6 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
         self.MotorCntrl.MotorThread.StopAcquisition.connect(self.StopMeas)
         self.actionThorlabs.triggered.connect(self.MotorCntrl.showself)
         self.actionThorlabs.setShortcut("Ctrl+M")
-        FileHandle.updatecnfg(attribute='Number', value=2)
 
 
     #Stellt ein Eth verbindung mit dem Board her. Übergibt Dabei Portnummer und MAC-Addresse aus GUI
@@ -175,11 +168,22 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
                 self.folder =self.path #+ now.strftime("_%b_%d_%Y_%H_%M_%S")
                 os.mkdir(self.folder)
 
+                if self.DelayLine != None:
 
-                copyfile('.\cnfg.txt', self.folder+'\cnfg.txt')
-                copyfile('.\Resolution.txt', self.folder + '\Resolution.txt')
+                    os.mkdir(self.folder+"\Forward")
+                    os.mkdir(self.folder+"\Backward")
 
+                    copyfile('.\cnfg.txt', self.folder + '\cnfg.txt')
+                    copyfile('.\Resolution.txt', self.folder + '\Resolution.txt')
 
+                    copyfile('.\cnfg.txt', self.folder+'\Backward\cnfg.txt')
+                    copyfile('.\cnfg.txt', self.folder + '\Forward\cnfg.txt')
+
+                    copyfile('.\Resolution.txt', self.folder + '\Forward\Resolution.txt')
+                    copyfile('.\Resolution.txt', self.folder + '\Backward\Resolution.txt')
+                else:
+                    copyfile('.\cnfg.txt', self.folder + '\cnfg.txt')
+                    copyfile('.\Resolution.txt', self.folder + '\Resolution.txt')
 
             #gibt den Befehl an das Board zum Straten einer Messung
             #Dabei wird ein Thread erstellt, der alle n ms die Daten abfragt.
@@ -221,24 +225,40 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             # Wählt nach den Einstellungen aus, ob life FFt oder nicht
 
             #for i in range(0, len(RawData)-1,2):
-            #    self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
+            #   self.Data.append(int.from_bytes((RawData[i],(0xf0 ^ RawData[i+1]) if 0x08 & RawData[i+1] else RawData[i+1] ),byteorder='little',signed=True))
 
             for i in range(0, len(RawData)-1,2):
                 self.Data.append(int.from_bytes((RawData[i],RawData[i+1]),byteorder='little', signed=False))
 
-            #Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
-            self.Data = np.true_divide(self.Data, (65536/3.3))
+            if self.DelayLine == None:
+                self.Data = np.true_divide(self.Data, (65536 / 3.3))
+            else:
+                if (self.MotorCntrl.Positions[0]>self.MotorCntrl.Positions[3]):
+                    # Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
+                    self.Data.reverse()
+                    self.Data = np.true_divide(self.Data, (65536 / 3.3))
 
-            diff = self.Data[0:-1-1]-self.Data[1:-1]
-            print(np.min(np.abs(diff)))
+                    Reverse = True
+                else:
+                    Reverse = False
+                    # Normierung auf ADC-Auflösung und Spannungsteilerverhältnis von 3.3
+                    self.Data = np.true_divide(self.Data, (65536 / 3.3))
+
             #Erstellen einer Zeitachse aus Equidistanten Messpunkten
             self.time = np.arange(0, len(self.Data), 1)*self.const
             #Abbilden der Kurve
+
+            print("PP Value:")
+            print(abs(max(self.Data[0:len(self.Data/4)]))+abs(min(self.Data[0:len(self.Data/4)])))
+
             self.curve.setData(self.time, self.Data)
 
             #Speichern, oder nicht
             if self.StoreMeas.isChecked():
-                CSVProcess(self.time, self.Data, self.folder, self.progressBar.value())
+                if self.DelayLine == None:
+                    CSVProcess(self.time, self.Data, self.folder, self.progressBar.value())
+                else:
+                    CSVProcess(self.time, self.Data, self.folder+"\Forward", str(self.progressBar.value())) if Reverse==False  else CSVProcess(self.time, self.Data, self.folder+"\Backward", str(self.progressBar.value()))
 
             #Life FFT oder nicht
             if self.lifefft or not self.StoreMeas.isChecked():
@@ -258,7 +278,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
                 dataitem.setData(freq[freqmask] ,my_fft[freqmask])
         else:
             self.NumberOfRuns = self.NumberOfRuns + 1
-        print('Updategraph')
+
         #Wiederhohlen der Messung und Updaten des Messfortschrittbalkens
         if(self.NumberOfRuns>1):
 
@@ -315,6 +335,7 @@ class TimerThread(QtCore.QThread):
         self.Emit.emit()
 
 
+#Speichern der Daten in zuvor Erstellten Ordner mit Vortlaufender Nummerierung
 #Speichern der Daten in zuvor Erstellten Ordner mit Vortlaufender Nummerierung
 def CSVProcess(time, data, folder, number):
 
