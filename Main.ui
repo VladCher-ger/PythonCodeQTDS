@@ -141,10 +141,10 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ip. Addr. of FPGA-Board&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;MAC-Addr. of the Device&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="text">
-           <string>134.91.61.197</string>
+           <string>00:18:3E:02:F0:EB</string>
           </property>
          </widget>
         </item>
@@ -334,7 +334,7 @@
      <addaction name="actionSmall"/>
     </widget>
     <addaction name="actionLoad_Graph"/>
-    <addaction name="menuMake_AVG"/>
+    <addaction name="actionMake_AVG"/>
     <addaction name="menuFFT"/>
     <addaction name="menuZero_Fit"/>
     <addaction name="separator"/>
@@ -366,6 +366,11 @@
   <action name="actionLoad_Graph">
    <property name="text">
     <string>Load Graph</string>
+   </property>
+  </action>
+  <action name="actionMake_AVG">
+   <property name="text">
+    <string>Make AVG</string>
    </property>
   </action>
   <action name="actionBlackman">

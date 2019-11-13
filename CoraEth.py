@@ -1,29 +1,28 @@
 import socket
 from PyQt5 import QtCore
 import time
-
+from scapy.all import ARP, Ether, srp
 
 class CoraZ7Eth():
     def __init__(self, parent=None):
         super(CoraZ7Eth,self).__init__()
         self.Cora = None
 
-    def Connect(self, IP, PORT):
+    def Connect(self, MAC, PORT):
 
        # ans,_ = srp(Ether(dst=MAC)/ARP(pdst="134.91.61.0/24"), timeout=1, verbose=False)
 
-        #try:
-            #IP = ans[0][1].psrc
-         #   IP = '192.168.1.10'
+        try:
+            IP = ans[0][1].psrc
+            print("Hier")
             #print(IP)
-        #except:
-          #  IP = '192.168.1.10'
+        except:
+            IP = '192.168.1.10'
             #return "Search unsuccesful\n"
-
+        print(IP)
         self.Cora = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Cora.settimeout(2)
         try:
-            print(IP)
             self.Cora.connect((IP, PORT))
             self.EthThread = EthThread((IP, PORT))
             self.Cora.sendall(b'Init')
@@ -97,19 +96,22 @@ class EthThread(QtCore.QThread):
                 except:
                     self.Error.emit("Error")
                     self.DataReady.emit(bytearray())
+                    print("end")
                     del self.rec
                     return
 
 
             print(len(self.rec))
-            if len(self.rec)<8000:
+            if len(self.rec)<10000:
                 self.Error.emit("Error")
+                print("end")
                 self.DataReady.emit(bytearray())
                 del self.rec
                 return
             else:
                 self.DataReady.emit(self.rec)
                 del self.rec
+            print("end")
         return
 
     def KillSelf(self):

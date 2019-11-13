@@ -118,11 +118,8 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
             self.EthDevice = CoraEth.CoraZ7Eth()
             #Remote Start der messung
             self.RunMeas.clicked.connect(self.StartRun)
-            FileHandle.updatecnfg(attribute='Number of optical paths', value=1)
-            FileHandle.updatecnfg(attribute='Stage speed [mm/s]', value=30)
-            FileHandle.updatecnfg(attribute='Running Avarage', value=256)
-
-
+            FileHandle.updatecnfg(attribute='Number', value=1)
+            FileHandle.updatecnfg(attribute='speed', value=30)
             #Erzeugung eines Threads zum zeitlichen Buffern zwischen Messungen
             self.TimerThread = TimerThread()
             #Automatisches Startet einer neuen Messung, wenn die ANzahl an gewünschten Messungen noch nicht Erfolgt ist
