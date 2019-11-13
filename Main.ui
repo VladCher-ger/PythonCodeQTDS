@@ -375,11 +375,6 @@
     <string>Load Graph</string>
    </property>
   </action>
-  <action name="actionMake_AVG">
-   <property name="text">
-    <string>Make AVG</string>
-   </property>
-  </action>
   <action name="actionBlackman">
    <property name="text">
     <string>Blackman</string>
