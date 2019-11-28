@@ -60,6 +60,7 @@ class MainApplication(QtGui.QMainWindow, Main.Ui_MainWindow ):
 
         self.actionMake_AVG.triggered.connect(self.PostCalc.MakeAvg)
         self.actionMake_AVGSingle.triggered.connect(self.PostCalc.SelfAvarage)
+        self.actionTrue_phase_Mean.triggered.connect(self.PostCalc.TruePhaseAvg)
 
 
         #MakeFFT bleibt immer gleich, übergibt eine Fensterfunktion nach Auaswahl an die FFT

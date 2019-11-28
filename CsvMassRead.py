@@ -52,14 +52,14 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
              reader = csv.reader(csv_reader, delimiter=';')
 
              for row in reader:
-                 val.append(float(row[0]))
+                 val.append(float(row[1]))
 
         val2 = []
         with open(file2) as csv_reader:
              reader = csv.reader(csv_reader, delimiter=';')
 
              for row in reader:
-                 val2.append(float(row[0]))
+                 val2.append(float(row[1]))
 
 
 
@@ -99,8 +99,6 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
 
 
         self.resultavgdiff = np.true_divide(np.diff(self.UnwAngle[self.peaks[0:40]]), np.diff(self.freq[self.peaks[0:40]]))/2/np.pi
-
-
 
 
         if Refrect:
@@ -166,12 +164,12 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         f2 = np.asarray(f2)
         val2 = np.asarray(val2)
 
-        fmask = self.f < 3e12
-        f2mask = f2 <3e12
+        fmask = self.f < 3
+        f2mask = f2 <3
 
-        self.peaks,_ = find_peaks(val[fmask], distance=43e9/self.f[1])
+        self.peaks,_ = find_peaks(val[fmask], distance=0.043/self.f[1])
 
-        self.peaks2,_ = find_peaks(val2[f2mask], distance=43e9/f2[1])
+        self.peaks2,_ = find_peaks(val2[f2mask], distance=0.043/f2[1])
 
         mean1 = np.mean(val[self.peaks[1:35]])
         mean2 = np.mean(val2[self.peaks2[1:35]])
@@ -182,19 +180,20 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
             self.f, val ,f2, val2 = f2, val2, self.f, val
 
             self.peaks, self.peaks2 = self.peaks2, self.peaks
+
         plt.figure(figsize=(20,25))
         self.gs = plt.GridSpec(2,2)
         plt.subplot(self.gs[0,0])
-        plt.plot( self.f[fmask]*1e-12, val[fmask],  label = 'Referenz')
-        plt.plot( f2[f2mask]*1e-12, val2[f2mask] ,label= 'Probe')
+        plt.plot( self.f[fmask], val[fmask],  label = 'Referenz')
+        plt.plot( f2[f2mask], val2[f2mask] ,label= 'Probe')
         plt.xlabel("f / THz")
         plt.ylabel(r"20Log(I$_{det}$3*10$^3 \frac{V}{A}$)")
         plt.legend()
         plt.grid()
 
         plt.subplot(self.gs[0,1])
-        plt.plot(self.f[self.peaks]*1e-12, val[self.peaks],"x", label = 'Referenz')
-        plt.plot( f2[self.peaks2]*1e-12, val2[self.peaks2],"o" , label = 'Probe')
+        plt.plot(self.f[self.peaks], val[self.peaks],"x", label = 'Referenz')
+        plt.plot( f2[self.peaks2], val2[self.peaks2],"o" , label = 'Probe')
         plt.xlabel("f / THz")
         plt.ylabel(r"20Log(I$_{det}$3*10$^3 \frac{V}{A}$)")
         plt.legend()
@@ -215,7 +214,7 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         alpha = np.true_divide(self.absorb, 10*np.log10(np.e)*d)
 
         plt.subplot(self.gs[1,:])
-        plt.plot(self.f[self.peaks[0:35]]*1e-12, alpha, '--', Marker = 'x')
+        plt.plot(self.f[self.peaks[0:35]], alpha, '--', Marker = 'x')
         plt.xlabel("f / THz")
         plt.ylabel("Absorbtion / $cm^{-1}$")
         plt.grid()
@@ -240,15 +239,20 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         else:
             result = self.resultavgdiff * 1e-12 * 299792458 / (1 - input)
 
+        print(result)
+        plt.plot(self.freq[self.peaks[0:39]], result)
+        plt.grid()
+        plt.show()
+        """
         plt.subplot(2,1,1)
         plt.plot(self.freq[self.peaks[0:40]],self.UnwAngle[self.peaks[0:40]])
         plt.grid()
         plt.subplot(2,1,2)
         plt.plot(self.freq[self.peaks[0:39]], result)
         plt.grid()
-        plt.show()
-        plt.clf()
-        plt.close()
+        
+        """
+
 
 class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
@@ -259,6 +263,82 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
         self.root.withdraw()
         self.setupUi(self)
 
+    def TruePhaseAvg(self):
+
+        file_path = filedialog.askopenfilenames()
+        try:
+            folder = file_path[0].split('/')
+        except:
+            return
+
+        path = ''
+        for i in range(0, len(folder) - 1):
+            path = path + folder[i] + "/"
+        path = path + 'Resolution.txt'
+
+        try:
+            with open(path, 'r') as f:
+                for line in f.readlines():
+                    category, value = line.strip().split(';')
+                self.deltaT = float(value)
+                print(self.deltaT)
+        except:
+            self.deltaT = FileHandle.getResolution()
+            print(self.deltaT)
+        self.LoadCsvBar.setMaximum(len(file_path))
+        self.show()
+        arraylist = []
+        try:
+            for numb, i in enumerate(file_path):
+                avg = []
+                Timearray = []
+                oneax = True
+                self.LoadCsvBar.setValue(numb + 1)
+                QtGui.QGuiApplication.processEvents()
+                with open(i) as csv_file:
+                    reader = csv.reader(csv_file, delimiter=';')
+
+                    for row in reader:
+                        if len(row) == 2:
+                            Timearray.append(float(row[0]))
+                            avg.append(float(row[1]))
+                            oneax = False
+                        else:
+                            avg.append(float(row[0]))
+
+                arraylist.append(np.asarray(avg))
+
+
+        except:
+            None
+
+        length=0;
+        cnt=0
+        for i in arraylist:
+            if length == 0:
+                length = len(i)
+
+            if length > len(i):
+                length = len(i)
+
+            cnt = cnt + 1
+
+        avg = np.zeros(length)
+
+        for i in arraylist:
+
+            avg = avg + i[0:length]
+
+        self.close()
+        print(cnt)
+        avg = np.true_divide(avg, cnt)
+
+        Timearray = np.arange(0, length, 1) * self.deltaT
+
+        FileHandle.SaveData(Timearray, avg)
+
+        plt.plot(Timearray, avg)
+        plt.show()
 
     def MakeAvg(self, printer):
 
@@ -308,12 +388,12 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
             maxval = np.max(valarray)
 
-            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=21/self.deltaT)
+            peaks,_ = find_peaks(valarray, height=(maxval*0.6, maxval), distance=19/self.deltaT)
 
             distance = peaks[1:-1]-peaks[0:-1-1]
 
             try:
-                if np.min(distance)*self.deltaT< 19 or np.max(distance)*self.deltaT >26:
+                if np.min(distance)*self.deltaT< 18 or np.max(distance)*self.deltaT >25:
 
                     continue
             except:
@@ -323,7 +403,7 @@ class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
 
                 continue
             print(i)
-            valarray = valarray[peaks[0]-20:-1]
+            valarray = valarray[peaks[0]+700:-1]
 
             cutval.append(valarray)
         #############################################

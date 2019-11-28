@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Cherniak\Desktop\PythonCodeQTDS\Main.ui'
+# Form implementation generated from reading ui file 'C:\Users\Vlady\Desktop\PythonCodeQTDS\Main.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created by: PyQt5 UI code generator 5.12.2
 #
 # WARNING! All changes made in this file will be lost!
-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -153,6 +152,8 @@ class Ui_MainWindow(object):
         self.actionMake_AVGSingle.setObjectName("actionMake_AVGSingle")
         self.actionMake_AVG = QtWidgets.QAction(MainWindow)
         self.actionMake_AVG.setObjectName("actionMake_AVG")
+        self.actionTrue_phase_Mean = QtWidgets.QAction(MainWindow)
+        self.actionTrue_phase_Mean.setObjectName("actionTrue_phase_Mean")
         self.menuMenu.addAction(self.actionExit)
         self.menuMenu.addAction(self.actionConfiguration)
         self.menuMotorCntrl.addAction(self.actionThorlabs)
@@ -166,6 +167,7 @@ class Ui_MainWindow(object):
         self.menuZero_Fit.addAction(self.actionSmall)
         self.menuMake_AVG.addAction(self.actionMake_AVGSingle)
         self.menuMake_AVG.addAction(self.actionMake_AVG)
+        self.menuMake_AVG.addAction(self.actionTrue_phase_Mean)
         self.menuPostCalc.addAction(self.actionLoad_Graph)
         self.menuPostCalc.addAction(self.menuMake_AVG.menuAction())
         self.menuPostCalc.addAction(self.menuFFT.menuAction())
@@ -227,6 +229,9 @@ class Ui_MainWindow(object):
         self.actionConfiguration.setText(_translate("MainWindow", "Configuration"))
         self.actionMake_AVGSingle.setText(_translate("MainWindow", "Single Meas"))
         self.actionMake_AVG.setText(_translate("MainWindow", "Multi Meas"))
+        self.actionTrue_phase_Mean.setText(_translate("MainWindow", "True phase Mean"))
+
+
 
 
 if __name__ == "__main__":

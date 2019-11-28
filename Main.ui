@@ -339,6 +339,7 @@
      </property>
      <addaction name="actionMake_AVGSingle"/>
      <addaction name="actionMake_AVG"/>
+     <addaction name="actionTrue_phase_Mean"/>
     </widget>
     <addaction name="actionLoad_Graph"/>
     <addaction name="menuMake_AVG"/>
@@ -443,6 +444,11 @@
   <action name="actionMake_AVG">
    <property name="text">
     <string>Multi Meas</string>
+   </property>
+  </action>
+  <action name="actionTrue_phase_Mean">
+   <property name="text">
+    <string>True phase Mean</string>
    </property>
   </action>
  </widget>
