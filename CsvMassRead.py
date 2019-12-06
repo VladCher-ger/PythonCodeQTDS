@@ -239,19 +239,22 @@ class CalcRefrect(QtWidgets.QDialog, Dialog.Ui_Dialog):
         else:
             result = self.resultavgdiff * 1e-12 * 299792458 / (1 - input)
 
-        print(result)
-        plt.plot(self.freq[self.peaks[0:39]], result)
-        plt.grid()
-        plt.show()
-        """
         plt.subplot(2,1,1)
         plt.plot(self.freq[self.peaks[0:40]],self.UnwAngle[self.peaks[0:40]])
         plt.grid()
         plt.subplot(2,1,2)
         plt.plot(self.freq[self.peaks[0:39]], result)
         plt.grid()
-        
+        plt.show()
+
         """
+                print(result)
+                plt.plot(self.freq[self.peaks[0:39]], result)
+                plt.grid()
+                plt.show()
+             """
+        
+
 
 
 class PostCalculation(QtGui.QWidget,ProBar.Ui_Probar):
