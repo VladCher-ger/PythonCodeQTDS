@@ -1,25 +1,13 @@
 import socket
 from PyQt5 import QtCore
-import time
-from scapy.all import ARP, Ether, srp
 
 class CoraZ7Eth():
     def __init__(self, parent=None):
         super(CoraZ7Eth,self).__init__()
         self.Cora = None
 
-    def Connect(self, MAC, PORT):
+    def Connect(self, IP, PORT):
 
-       # ans,_ = srp(Ether(dst=MAC)/ARP(pdst="134.91.61.0/24"), timeout=1, verbose=False)
-
-        try:
-            IP = ans[0][1].psrc
-            print("Hier")
-            #print(IP)
-        except:
-            IP = '192.168.1.10'
-            #return "Search unsuccesful\n"
-        print(IP)
         self.Cora = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Cora.settimeout(2)
         try:

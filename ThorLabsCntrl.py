@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, Qt
 import ThorLabs
 import FileHandle
-import time
+
 
 class MotorCntrl(QtGui.QMainWindow, ThorLabs.Ui_MainWindow):
     def __init__(self, Mototr, parent=None):
